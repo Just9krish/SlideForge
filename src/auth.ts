@@ -1,11 +1,13 @@
 import NextAuth, { type DefaultSession } from 'next-auth'
-import Google from 'next-auth/providers/google'
-// import Credentials from "next-auth/providers/credentials";
+// import Google from 'next-auth/providers/google';
+import Credentials from 'next-auth/providers/credentials'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import prisma from '@/lib/prisma'
+import { loginSchema } from './schema/auth.schema'
+import { getUserByEmail } from './prismaUtils/user'
 // import { loginSchema } from "./schema/auth.schema";
 // import { getUserByEmail, getUserById } from "./repeated/user";
-// import bcrypt from "bcryptjs";
+import bcrypt from 'bcryptjs'
 // import { UserRole } from "@prisma/client";
 // import { getTwoFactorConfirmationByUserId } from "@/repeated/twoFactorConfirmation";
 // import { getAcountByUserId } from "./repeated/accounts";
@@ -26,56 +28,59 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     session: { strategy: 'jwt' },
     adapter: PrismaAdapter(prisma),
     providers: [
-        Google({
-            clientId: process.env.GOOGLE_CLIENT_ID as string,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-            allowDangerousEmailAccountLinking: true,
-            async profile(profile) {
-                console.log({ profile })
-                // const existingUser = await prisma.user.findUnique({
-                //     where: {
-                //         email: profile.email,
-                //     },
-                // });
+        // Google({
+        //     clientId: process.env.GOOGLE_CLIENT_ID as string,
+        //     clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+        //     allowDangerousEmailAccountLinking: true,
+        //     async profile(profile) {
+        //         console.log({ profile })
+        //         const existingUser = await prisma.user.findUnique({
+        //             where: {
+        //                 email: profile.email,
+        //             },
+        //         });
 
-                // console.log("existing user", existingUser);
+        //         console.log("existing user", existingUser);
 
-                // if (existingUser) {
-                //     return existingUser;
-                // } else {
-                //     return {
-                //         email: profile.email,
-                //         image: profile.image,
-                //         firstName: profile.given_name,
-                //         lastName: profile.family_name,
-                //         profileImg: profile.picture,
-                //     };
-                // }
-            },
-        }),
-        // Credentials({
-        //     async authorize(credentials) {
-        //         const validatedField = loginSchema.safeParse(credentials);
-
-        //         if (validatedField.success) {
-        //             const { email, password } = validatedField.data;
-
-        //             const user = await getUserByEmail(email);
-
-        //             if (!user || !user.password) {
-        //                 return null;
-        //             }
-
-        //             const isPassMatched = await bcrypt.compare(password, user.password);
-
-        //             if (isPassMatched) {
-        //                 return user;
-        //             }
+        //         if (existingUser) {
+        //             return existingUser;
+        //         } else {
+        //             return {
+        //                 email: profile.email,
+        //                 image: profile.image,
+        //                 firstName: profile.given_name,
+        //                 lastName: profile.family_name,
+        //                 profileImg: profile.picture,
+        //             };
         //         }
-
-        //         return null;
         //     },
         // }),
+        Credentials({
+            async authorize(credentials) {
+                const validatedField = loginSchema.safeParse(credentials)
+
+                if (validatedField.success) {
+                    const { email, password } = validatedField.data
+
+                    const user = await getUserByEmail(email)
+
+                    if (!user || !user.password) {
+                        return null
+                    }
+
+                    const isPassMatched = await bcrypt.compare(
+                        password,
+                        user.password
+                    )
+
+                    if (isPassMatched) {
+                        return user
+                    }
+                }
+
+                return null
+            },
+        }),
     ],
     // callbacks: {
     //     async jwt({ token }) {
