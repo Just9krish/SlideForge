@@ -75,3 +75,46 @@ export const getResetPasswordTokenByEmail = async (email: string) => {
         return null
     }
 }
+
+/**
+ * Retrieves the two-factor authentication token for a given email address.
+ *
+ * @param email - The email address to search for.
+ * @returns The two-factor authentication token object if found, otherwise null.
+ */
+export const getTwoFactorTokenByEmail = async (email: string) => {
+    try {
+        // Attempt to find the two-factor token associated with the email
+        const token = await prisma.twoFactorToken.findFirst({
+            where: {
+                email,
+            },
+        })
+
+        // Return the token if found
+        return token
+    } catch {
+        // Return null if an error occurs
+        return null
+    }
+}
+
+/**
+ * Retrieves a two factor token by its token value.
+ *
+ * @param token - The token value of the two factor token.
+ * @returns The two factor token object if found, otherwise null.
+ */
+export const getTwoFactorTokenByToken = async (token: string) => {
+    try {
+        const exisitingToken = await prisma.twoFactorToken.findFirst({
+            where: {
+                token,
+            },
+        })
+
+        return exisitingToken
+    } catch {
+        return null
+    }
+}

@@ -6,30 +6,28 @@ import {
     Card,
 } from '@/components/ui/card'
 import Link from 'next/link'
-import RegisterForm from './_components/RegisterForm'
 import Socials from '../_components/Socials'
+import LoginForm from './_components/LoginForm'
 
 export default function page() {
     return (
-        <Card className="mx-auto max-w-lg">
+        <Card className="mx-auto max-w-sm">
             <CardHeader className="space-y-1">
-                <CardTitle className="text-2xl font-bold">
-                    Registration
-                </CardTitle>
+                <CardTitle className="text-2xl font-bold">Login</CardTitle>
                 <CardDescription>
-                    Enter your details to creat an account
+                    Enter your email below to login to your account
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="space-y-4">
-                    <RegisterForm />
+                    <LoginForm />
                     <p className="text-center">Or</p>
-                    <Socials label="Sign up" />
+                    <Socials label="Login" />
                 </div>
                 <div className="mt-4 text-center text-sm">
-                    Already have account?
-                    <Link className="underline" href="/login">
-                        Log in
+                    Don&apos;t have an account?
+                    <Link className="underline" href="/signup">
+                        Sign up
                     </Link>
                 </div>
             </CardContent>

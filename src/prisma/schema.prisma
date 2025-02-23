@@ -14,19 +14,22 @@ datasource db {
 }
 
 model User {
-  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  firstName          String
-  lastName           String
-  email              String    @unique
-  emailVerified      DateTime?
-  password           String
-  profileImg         String?
-  subscription       Boolean?  @default(false)
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-  lemonSqueezyApiKey String?
-  storeId            String?
-  webhooksecret      String?
+  id                      String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName               String
+  lastName                String
+  email                   String                 @unique
+  emailVerified           DateTime?
+  password                String
+  profileImg              String?
+  subscription            Boolean?               @default(false)
+  createdAt               DateTime               @default(now())
+  updatedAt               DateTime               @updatedAt
+  lemonSqueezyApiKey      String?
+  storeId                 String?
+  webhooksecret           String?
+  isTwoFactorEnabled      Boolean                @default(false)
+  towFactorConfirmation   TwoFactorConfirmation?
+  twoFactorConfirmationId String?
 
   Projects          Project[] @relation("OwnedProjects")
   PurchasedProjects Project[] @relation("PurchasedProjects")
@@ -68,6 +71,21 @@ model ResetPasswordToken {
   expires DateTime
 
   @@unique([email, rToken])
+}
+
+model TwoFactorToken {
+  id      String   @id @default(uuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model TwoFactorConfirmation {
+  id     String @id @default(uuid())
+  userId String @unique @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {
