@@ -1,6 +1,6 @@
-import { Resend } from 'resend'
+import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
  * Sends a verification email to the specified email address.
@@ -10,15 +10,15 @@ const resend = new Resend(process.env.RESEND_API_KEY)
  * @returns A Promise that resolves when the email is sent successfully.
  */
 export const sendVerificationEmail = async (email: string, token: string) => {
-    const verificationLink = `${process.env.CLIENT_DOMAIN}/new-verification?token=${token}`
+    const verificationLink = `${process.env.CLIENT_DOMAIN}/new-verification?token=${token}`;
 
     await resend.emails.send({
         from: 'onboarding@resend.dev',
         to: email,
         subject: 'Confirm you email',
         html: `<p>Click <a href="${verificationLink}">here</a> to confirm email.</p>`,
-    })
-}
+    });
+};
 
 /**
  * Sends a reset password email to the specified email address.
@@ -28,15 +28,15 @@ export const sendVerificationEmail = async (email: string, token: string) => {
  * @returns A Promise that resolves to the result of sending the email.
  */
 export const sendResetPasswordEmail = async (email: string, token: string) => {
-    const verificationLink = `${process.env.CLIENT_DOMAIN}/new-password?token=${token}`
+    const verificationLink = `${process.env.CLIENT_DOMAIN}/new-password?token=${token}`;
 
     await resend.emails.send({
         from: 'onboarding@resend.dev',
         to: email,
         subject: 'Reset Your passowrd',
         html: `<p>Click <a href="${verificationLink}">here</a> to reset your password.</p>`,
-    })
-}
+    });
+};
 
 /**
  * Sends a two-factor authentication email to the specified email address.
@@ -51,5 +51,5 @@ export const sendTwoAuthEmail = async (email: string, token: string) => {
         to: email,
         subject: '2FA Code',
         html: `<p>Your 2FA code: ${token}</p>`,
-    })
-}
+    });
+};

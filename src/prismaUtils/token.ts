@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma'
+import prisma from '@/lib/prisma';
 
 /**
  * Retrieves the verification token associated with the given email.
@@ -12,13 +12,13 @@ export const getVerificationTokenByEmail = async (email: string) => {
             where: {
                 email,
             },
-        })
+        });
 
-        return verificationToken
+        return verificationToken;
     } catch {
-        return null
+        return null;
     }
-}
+};
 
 /**
  * Retrieves a verification token by its token value.
@@ -32,13 +32,13 @@ export const getVerificationTokenByToken = async (token: string) => {
             where: {
                 vToken: token,
             },
-        })
+        });
 
-        return verificationToken
+        return verificationToken;
     } catch {
-        return null
+        return null;
     }
-}
+};
 
 /**
  * Retrieves a reset password token by its token value.
@@ -50,13 +50,13 @@ export const getResetPasswordTokenByToken = async (token: string) => {
     try {
         const resetToken = await prisma.resetPasswordToken.findUnique({
             where: { rToken: token },
-        })
+        });
 
-        return resetToken
+        return resetToken;
     } catch {
-        return null
+        return null;
     }
-}
+};
 
 /**
  * Retrieves the reset password token for a given email.
@@ -68,13 +68,13 @@ export const getResetPasswordTokenByEmail = async (email: string) => {
     try {
         const resetToken = await prisma.resetPasswordToken.findFirst({
             where: { email },
-        })
+        });
 
-        return resetToken
+        return resetToken;
     } catch {
-        return null
+        return null;
     }
-}
+};
 
 /**
  * Retrieves the two-factor authentication token for a given email address.
@@ -89,15 +89,15 @@ export const getTwoFactorTokenByEmail = async (email: string) => {
             where: {
                 email,
             },
-        })
+        });
 
         // Return the token if found
-        return token
+        return token;
     } catch {
         // Return null if an error occurs
-        return null
+        return null;
     }
-}
+};
 
 /**
  * Retrieves a two factor token by its token value.
@@ -111,10 +111,10 @@ export const getTwoFactorTokenByToken = async (token: string) => {
             where: {
                 token,
             },
-        })
+        });
 
-        return exisitingToken
+        return exisitingToken;
     } catch {
-        return null
+        return null;
     }
-}
+};

@@ -1,16 +1,16 @@
-'use client'
+'use client';
 
-import { Button } from '@/components/ui/button'
-import { FcGoogle } from 'react-icons/fc'
-import { signIn } from 'next-auth/react'
-import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
+import { Button } from '@/components/ui/button';
+import { FcGoogle } from 'react-icons/fc';
+import { signIn } from 'next-auth/react';
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
 
 export default function Socials({ label }: { label: string }) {
     const onClickHandler = (provider: 'google' | 'github') => {
         signIn(provider, {
             callbackUrl: DEFAULT_LOGIN_REDIRECT,
-        })
-    }
+        });
+    };
 
     return (
         <div className="flex w-full items-center gap-2">
@@ -24,5 +24,5 @@ export default function Socials({ label }: { label: string }) {
                 {label} with Google
             </Button>
         </div>
-    )
+    );
 }

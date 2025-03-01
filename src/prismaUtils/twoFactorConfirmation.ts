@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma'
+import prisma from '@/lib/prisma';
 
 /**
  * Retrieves the two-factor confirmation record for a given user ID.
@@ -14,15 +14,15 @@ export const getTwoFactorConfirmationByUserId = async (userId: string) => {
                 where: {
                     userId,
                 },
-            })
+            });
 
         // Return the two-factor confirmation if found
-        return twoFactorConfirmation
+        return twoFactorConfirmation;
     } catch {
         // Return null if an error occurs
-        return null
+        return null;
     }
-}
+};
 
 /**
  * Deletes the two-factor confirmation record for a given user ID.
@@ -37,12 +37,12 @@ export const deleteTwoFactorConfirmationByUserId = async (userId: string) => {
             where: {
                 userId,
             },
-        })
+        });
     } catch {
         // Return null if an error occurs during the deletion process
-        return null
+        return null;
     }
-}
+};
 
 /**
  * Deletes the two-factor confirmation record for a given confirmation ID.
@@ -57,12 +57,12 @@ export const deleteTwoFactorConfirmationById = async (id: string) => {
             where: {
                 id,
             },
-        })
+        });
     } catch {
         // Return null if an error occurs during the deletion process
-        return null
+        return null;
     }
-}
+};
 
 /**
  * Creates a two-factor confirmation record for a given user ID.
@@ -79,12 +79,12 @@ export const createTwoFactorConfirmation = async (userId: string) => {
                     userId,
                 },
             }
-        )
+        );
 
         // Return the created two-factor confirmation object
-        return twoFactorConfirmation
+        return twoFactorConfirmation;
     } catch {
         // Return null if an error occurs during the creation process
-        return null
+        return null;
     }
-}
+};

@@ -1,11 +1,11 @@
-'use server'
+'use server';
 
 import {
     generateResetToken,
     generateTwoFactorToken,
     generateVerificationToken,
-} from '@/lib/token'
-import { getUserByEmail } from '@/prismaUtils/user'
+} from '@/lib/token';
+import { getUserByEmail } from '@/prismaUtils/user';
 import {
     loginSchema,
     LoginInput,
@@ -15,24 +15,24 @@ import {
     NewPasswordInput,
     forgotPasswordSchema,
     ForgotPasswordInput,
-} from '@/schema/auth.schema'
-import { signIn, signOut } from '@/auth'
-import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
-import { AuthError } from 'next-auth'
-import bcrypt from 'bcryptjs'
-import { SALT } from '@/lib/constant'
+} from '@/schema/auth.schema';
+import { signIn, signOut } from '@/auth';
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes';
+import { AuthError } from 'next-auth';
+import bcrypt from 'bcryptjs';
+import { SALT } from '@/lib/constant';
 import {
     getResetPasswordTokenByToken,
     getTwoFactorTokenByEmail,
     getVerificationTokenByToken,
-} from '@/prismaUtils/token'
-import { isBefore } from 'date-fns'
+} from '@/prismaUtils/token';
+import { isBefore } from 'date-fns';
 import {
     createTwoFactorConfirmation,
     deleteTwoFactorConfirmationById,
     getTwoFactorConfirmationByUserId,
-} from '@/prismaUtils/twoFactorConfirmation'
-import prisma from '@/lib/prisma'
+} from '@/prismaUtils/twoFactorConfirmation';
+import prisma from '@/lib/prisma';
 
 /**
  * Logs in the user by calling the signIn function.
@@ -43,18 +43,18 @@ import prisma from '@/lib/prisma'
 export async function login(
     payload: LoginInput
 ): Promise<{ success: string } | { error: string } | { twoAuth: boolean }> {
-    const validateField = loginSchema.safeParse(payload)
+    const validateField = loginSchema.safeParse(payload);
 
     if (!validateField.success) {
-        return { error: 'Invalid fields!' }
+        return { error: 'Invalid fields!' };
     }
 
-    const { email, password, code } = validateField.data
+    const { email, password, code } = validateField.data;
 
-    const existingUser = await getUserByEmail(email)
+    const existingUser = await getUserByEmail(email);
 
     if (!existingUser || !existingUser.email || !existingUser.password) {
-        return { error: 'Invalid credentials!' }
+        return { error: 'Invalid credentials!' };
     }
 
     if (!existingUser.emailVerified) {
@@ -64,11 +64,11 @@ export async function login(
          *
          * @see generateVerificationToken
          */
-        await generateVerificationToken(existingUser.email)
+        await generateVerificationToken(existingUser.email);
 
         return {
             error: 'Please verify your email!',
-        }
+        };
     }
 
     if (existingUser.isTwoFactorEnabled && existingUser.email) {
@@ -76,41 +76,41 @@ export async function login(
             // Check the two-factor authentication code
             const twoAuthCode = await getTwoFactorTokenByEmail(
                 existingUser.email
-            )
+            );
 
             if (!twoAuthCode) {
-                return { error: 'Invalid code!' }
+                return { error: 'Invalid code!' };
             }
 
             if (twoAuthCode.token !== code) {
-                return { error: 'Invalid code!' }
+                return { error: 'Invalid code!' };
             }
 
             const hasExpired = isBefore(
                 new Date(twoAuthCode.expires),
                 new Date()
-            )
+            );
 
             if (hasExpired) {
-                return { error: 'Code expired!' }
+                return { error: 'Code expired!' };
             }
 
             // Delete any existing two-factor confirmation
             const existingConfirmation = await getTwoFactorConfirmationByUserId(
                 existingUser.id
-            )
+            );
 
             if (existingConfirmation) {
-                await deleteTwoFactorConfirmationById(existingConfirmation.id)
+                await deleteTwoFactorConfirmationById(existingConfirmation.id);
             }
 
             // Create a new two-factor confirmation
-            await createTwoFactorConfirmation(existingUser.id)
+            await createTwoFactorConfirmation(existingUser.id);
         } else {
             // Generate a new two-factor token
-            await generateTwoFactorToken(existingUser.email)
+            await generateTwoFactorToken(existingUser.email);
 
-            return { twoAuth: true }
+            return { twoAuth: true };
         }
     }
 
@@ -124,8 +124,8 @@ export async function login(
             email,
             password,
             redirectTo: DEFAULT_LOGIN_REDIRECT,
-        })
-        return { success: 'Login successful!' }
+        });
+        return { success: 'Login successful!' };
     } catch (error) {
         /**
          * Handle authentication errors.
@@ -135,14 +135,14 @@ export async function login(
         if (error instanceof AuthError) {
             switch (error.type) {
                 case 'CredentialsSignin':
-                    return { error: 'Invalid credentials!' }
+                    return { error: 'Invalid credentials!' };
 
                 default:
-                    return { error: 'Something went wrong!' }
+                    return { error: 'Something went wrong!' };
             }
         }
 
-        throw error
+        throw error;
     }
 }
 
@@ -152,7 +152,7 @@ export async function login(
  * @returns {Promise<void>} A promise that resolves when the user is successfully logged out.
  */
 export async function logout() {
-    await signOut()
+    await signOut();
 }
 
 /**
@@ -166,31 +166,31 @@ export async function register(data: RegisterInput) {
     /**
      * First we validate the input data using the registerSchema. If the data is invalid, we return an error.
      */
-    const validatedField = registerSchema.safeParse(data)
+    const validatedField = registerSchema.safeParse(data);
 
     if (!validatedField.success) {
-        return { error: 'Invalid fields!' }
+        return { error: 'Invalid fields!' };
     }
 
     /**
      * Extract the user data from the validated input.
      */
     const { email, firstName, lastName, password, isTwoFactorEnabled } =
-        validatedField.data
+        validatedField.data;
 
     /**
      * Check if the user already exists in the database. If so, return an error.
      */
-    const existingUser = await getUserByEmail(email)
+    const existingUser = await getUserByEmail(email);
 
     if (existingUser) {
-        return { error: 'This email is already in use!' }
+        return { error: 'This email is already in use!' };
     }
 
     /**
      * Hash the password using bcrypt. This is a slow hashing algorithm, so it's suitable for storing passwords.
      */
-    const hashedPassword = await bcrypt.hash(password, SALT)
+    const hashedPassword = await bcrypt.hash(password, SALT);
 
     /**
      * Create the user in the database.
@@ -203,17 +203,17 @@ export async function register(data: RegisterInput) {
             password: hashedPassword,
             isTwoFactorEnabled,
         },
-    })
+    });
 
     /**
      * Generate a verification token for the user, so they can verify their email.
      */
-    await generateVerificationToken(email)
+    await generateVerificationToken(email);
 
     /**
      * Return a success message to the user.
      */
-    return { success: 'Confirmation email sent' }
+    return { success: 'Confirmation email sent' };
 }
 
 /**
@@ -227,23 +227,23 @@ export async function register(data: RegisterInput) {
  *                    - If the token is valid and not expired, the 'success' property will be set to "Email verified!".
  */
 export async function verifyToken(token: string) {
-    const existingToken = await getVerificationTokenByToken(token)
+    const existingToken = await getVerificationTokenByToken(token);
 
     if (!existingToken) {
-        return { error: 'Invalid verification link!' }
+        return { error: 'Invalid verification link!' };
     }
 
     // const isTokenExpired = isAfter(existingToken.expires, new Date());
-    const isTokenExpired = new Date(existingToken.expires) < new Date()
+    const isTokenExpired = new Date(existingToken.expires) < new Date();
 
     if (isTokenExpired) {
-        return { error: 'Verification link expired!' }
+        return { error: 'Verification link expired!' };
     }
 
-    const existingUser = await getUserByEmail(existingToken.email)
+    const existingUser = await getUserByEmail(existingToken.email);
 
     if (!existingToken) {
-        return { error: 'Email does not exist!' }
+        return { error: 'Email does not exist!' };
     }
 
     await prisma.user.update({
@@ -254,15 +254,15 @@ export async function verifyToken(token: string) {
             emailVerified: new Date(),
             email: existingToken.email,
         },
-    })
+    });
 
     await prisma.verificationToken.delete({
         where: {
             id: existingToken.id,
         },
-    })
+    });
 
-    return { success: 'Email verified!' }
+    return { success: 'Email verified!' };
 }
 
 /**
@@ -272,23 +272,23 @@ export async function verifyToken(token: string) {
  * @returns {Object} - An object indicating the result of the operation. If the operation is successful, the object will have a 'success' property with the value "Reset password email sent". If there is an error, the object will have an 'error' property with a corresponding error message.
  */
 export async function forgotPassword(data: ForgotPasswordInput) {
-    const validatedField = forgotPasswordSchema.safeParse(data)
+    const validatedField = forgotPasswordSchema.safeParse(data);
 
     if (!validatedField.success) {
-        return { error: 'Invalid fields!' }
+        return { error: 'Invalid fields!' };
     }
 
-    const { email } = validatedField.data
+    const { email } = validatedField.data;
 
-    const existingUser = await getUserByEmail(email)
+    const existingUser = await getUserByEmail(email);
 
     if (!existingUser) {
-        return { error: 'Email not found!' }
+        return { error: 'Email not found!' };
     }
 
-    await generateResetToken(email)
+    await generateResetToken(email);
 
-    return { success: 'Reset password email sent' }
+    return { success: 'Reset password email sent' };
 }
 
 /**
@@ -311,44 +311,44 @@ export async function newPassword({
     data,
     token,
 }: {
-    data: NewPasswordInput
-    token: string | null
+    data: NewPasswordInput;
+    token: string | null;
 }) {
     if (!token) {
-        return { error: 'Token is missing!' }
+        return { error: 'Token is missing!' };
     }
 
-    const validatedField = newPasswordSchema.safeParse(data)
+    const validatedField = newPasswordSchema.safeParse(data);
 
     if (!validatedField.success) {
-        return { error: 'Invalid fields!' }
+        return { error: 'Invalid fields!' };
     }
 
-    const { password, confirmPassword } = validatedField.data
+    const { password, confirmPassword } = validatedField.data;
 
     if (password !== confirmPassword) {
-        return { error: 'Password does not match!' }
+        return { error: 'Password does not match!' };
     }
 
-    const existingToken = await getResetPasswordTokenByToken(token)
+    const existingToken = await getResetPasswordTokenByToken(token);
 
     if (!existingToken) {
-        return { error: 'Invalid Token!' }
+        return { error: 'Invalid Token!' };
     }
 
-    const isTokenExpired = new Date(existingToken.expires) < new Date()
+    const isTokenExpired = new Date(existingToken.expires) < new Date();
 
     if (isTokenExpired) {
-        return { error: 'Token is expired!' }
+        return { error: 'Token is expired!' };
     }
 
-    const existingUser = await getUserByEmail(existingToken.email)
+    const existingUser = await getUserByEmail(existingToken.email);
 
     if (!existingUser) {
-        return { error: 'Email does not exist!' }
+        return { error: 'Email does not exist!' };
     }
 
-    const hashedPassword = await bcrypt.hash(password, SALT)
+    const hashedPassword = await bcrypt.hash(password, SALT);
 
     await prisma.user.update({
         where: {
@@ -357,13 +357,13 @@ export async function newPassword({
         data: {
             password: hashedPassword,
         },
-    })
+    });
 
     await prisma.resetPasswordToken.delete({
         where: {
             id: existingToken.id,
         },
-    })
+    });
 
-    return { success: 'Password updated!' }
+    return { success: 'Password updated!' };
 }

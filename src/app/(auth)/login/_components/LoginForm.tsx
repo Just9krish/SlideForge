@@ -37,17 +37,17 @@ export default function LoginForm() {
         transitionStartFcn(() => {
             login(data)
                 .then((data) => {
-                    if ("error" in data) {
+                    if ('error' in data) {
                         toast.error(data.error);
-                    } else if ("success" in data) {
+                    } else if ('success' in data) {
                         form.reset();
                         toast.success(data.success);
-                    } else if ("twoAuth" in data) {
+                    } else if ('twoAuth' in data) {
                         setTwoAuth(true);
                     }
                 })
                 .catch(() => {
-                    toast.error("Something went wrong!");
+                    toast.error('Something went wrong!');
                 });
         });
     };

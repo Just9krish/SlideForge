@@ -1,6 +1,6 @@
-import { Card, CardFooter, CardHeader } from '@/components/ui/card'
-import Link from 'next/link'
-import React from 'react'
+import { Card, CardFooter, CardHeader } from '@/components/ui/card';
+import Link from 'next/link';
+import React from 'react';
 
 export default function page() {
     return (
@@ -10,5 +10,5 @@ export default function page() {
                 <Link href={'/login'}>Back to login</Link>
             </CardFooter>
         </Card>
-    )
+    );
 }

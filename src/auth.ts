@@ -1,22 +1,22 @@
-import NextAuth, { type DefaultSession } from 'next-auth'
-import Google from 'next-auth/providers/google'
-import Credentials from 'next-auth/providers/credentials'
-import { PrismaAdapter } from '@auth/prisma-adapter'
-import bcrypt from 'bcryptjs'
-import prisma from '@/lib/prisma'
-import { loginSchema } from '@/schema/auth.schema'
-import { getUserByEmail, getUserById } from '@/prismaUtils/user'
-import { getTwoFactorConfirmationByUserId } from '@/prismaUtils/twoFactorConfirmation'
-import { getAcountByUserId } from '@/prismaUtils/account'
+import NextAuth, { type DefaultSession } from 'next-auth';
+import Google from 'next-auth/providers/google';
+import Credentials from 'next-auth/providers/credentials';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import bcrypt from 'bcryptjs';
+import prisma from '@/lib/prisma';
+import { loginSchema } from '@/schema/auth.schema';
+import { getUserByEmail, getUserById } from '@/prismaUtils/user';
+import { getTwoFactorConfirmationByUserId } from '@/prismaUtils/twoFactorConfirmation';
+import { getAcountByUserId } from '@/prismaUtils/account';
 
 declare module 'next-auth' {
     interface Session {
         user: {
-            isTwoFactorEnabled: boolean
-            isOauth: boolean
-            firstName: string
-            lastName: string
-        } & DefaultSession['user']
+            isTwoFactorEnabled: boolean;
+            isOauth: boolean;
+            firstName: string;
+            lastName: string;
+        } & DefaultSession['user'];
     }
 }
 
@@ -29,17 +29,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
             allowDangerousEmailAccountLinking: true,
             async profile(profile) {
-                console.log({ profile })
+                // console.log({ profile })
                 const existingUser = await prisma.user.findUnique({
                     where: {
                         email: profile.email,
                     },
-                })
+                });
 
-                console.log('existing user', existingUser)
+                // console.log('existing user', existingUser)
 
                 if (existingUser) {
-                    return existingUser
+                    return existingUser;
                 } else {
                     return {
                         email: profile.email,
@@ -47,91 +47,91 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         firstName: profile.given_name,
                         lastName: profile.family_name,
                         profileImg: profile.picture,
-                    }
+                    };
                 }
             },
         }),
         Credentials({
             async authorize(credentials) {
-                const validatedField = loginSchema.safeParse(credentials)
+                const validatedField = loginSchema.safeParse(credentials);
 
                 if (validatedField.success) {
-                    const { email, password } = validatedField.data
+                    const { email, password } = validatedField.data;
 
-                    const user = await getUserByEmail(email)
+                    const user = await getUserByEmail(email);
 
                     if (!user || !user.password) {
-                        return null
+                        return null;
                     }
 
                     const isPassMatched = await bcrypt.compare(
                         password,
                         user.password
-                    )
+                    );
 
                     if (isPassMatched) {
-                        return user
+                        return user;
                     }
                 }
 
-                return null
+                return null;
             },
         }),
     ],
     callbacks: {
         async jwt({ token }) {
             if (!token.sub) {
-                return token
+                return token;
             }
-            console.log('token', token)
-            const user = await getUserById(token.sub)
+            // console.log('token', token)
+            const user = await getUserById(token.sub);
 
             if (!user) {
-                return token
+                return token;
             }
 
-            const existingAccount = await getAcountByUserId(user.id)
-            token.isOauth = !!existingAccount
-            token.isTwoFactorEnabled = user.isTwoFactorEnabled
-            token.firstName = user.firstName
-            token.lastName = user.lastName
+            const existingAccount = await getAcountByUserId(user.id);
+            token.isOauth = !!existingAccount;
+            token.isTwoFactorEnabled = user.isTwoFactorEnabled;
+            token.firstName = user.firstName;
+            token.lastName = user.lastName;
 
-            return token
+            return token;
         },
         async session({ session, token }) {
-            console.log('token', token)
+            // console.log('token', token)
             if (token.sub && session.user) {
-                session.user.id = token.sub
+                session.user.id = token.sub;
             }
 
             if (token.role && session.user) {
                 session.user.isTwoFactorEnabled =
-                    token.isTwoFactorEnabled as boolean
-                session.user.isOauth = token.isOauth as boolean
-                session.user.firstName = token.firstName as string
-                session.user.lastName = token.lastName as string
+                    token.isTwoFactorEnabled as boolean;
+                session.user.isOauth = token.isOauth as boolean;
+                session.user.firstName = token.firstName as string;
+                session.user.lastName = token.lastName as string;
             }
 
-            return session
+            return session;
         },
 
         async signIn({ user, account }) {
-            if (account?.provider !== 'credentials') return true
+            if (account?.provider !== 'credentials') return true;
 
             if (user.id) {
-                const existingUser = await getUserById(user.id)
+                const existingUser = await getUserById(user.id);
 
                 // Prevent unverified user to login
-                if (!existingUser?.emailVerified) return false
+                if (!existingUser?.emailVerified) return false;
 
                 // TODO: Add 2FA check
                 if (existingUser.isTwoFactorEnabled) {
                     const twoFactorConfirmation =
-                        await getTwoFactorConfirmationByUserId(existingUser.id)
+                        await getTwoFactorConfirmationByUserId(existingUser.id);
 
-                    console.log('2FA', twoFactorConfirmation)
+                    // console.log('2FA', twoFactorConfirmation)
 
-                    if (!twoFactorConfirmation) return false
+                    if (!twoFactorConfirmation) return false;
 
                     // Delete twoFactorConfirmation for next sign in
 
@@ -139,13 +139,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         where: {
                             id: twoFactorConfirmation.id,
                         },
-                    })
+                    });
                 }
             } else {
-                return false
+                return false;
             }
 
-            return true
+            return true;
         },
     },
 
@@ -158,7 +158,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 data: {
                     emailVerified: new Date(),
                 },
-            })
+            });
         },
     },
 
@@ -166,4 +166,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         signIn: '/login',
         error: '/error',
     },
-})
+});

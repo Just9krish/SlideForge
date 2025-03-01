@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma'
+import prisma from '@/lib/prisma';
 
 export const getAcountByUserId = async (id: string) => {
     try {
@@ -6,9 +6,9 @@ export const getAcountByUserId = async (id: string) => {
             where: {
                 userId: id,
             },
-        })
-        return account
+        });
+        return account;
     } catch {
-        return null
+        return null;
     }
-}
+};

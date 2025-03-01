@@ -4,10 +4,10 @@ import {
     CardHeader,
     CardContent,
     Card,
-} from '@/components/ui/card'
-import Link from 'next/link'
-import RegisterForm from './_components/RegisterForm'
-import Socials from '../_components/Socials'
+} from '@/components/ui/card';
+import Link from 'next/link';
+import RegisterForm from './_components/RegisterForm';
+import Socials from '../_components/Socials';
 
 export default function page() {
     return (
@@ -34,5 +34,5 @@ export default function page() {
                 </div>
             </CardContent>
         </Card>
-    )
+    );
 }

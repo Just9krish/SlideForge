@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma'
+import prisma from '@/lib/prisma';
 
 /**
  * Fetches a user from the database using their email address.
@@ -13,13 +13,13 @@ export async function getUserByEmail(email: string) {
             where: {
                 email,
             },
-        })
+        });
 
         // Return the user object if found
-        return user
+        return user;
     } catch {
         // Return null if an error occurs during the process
-        return null
+        return null;
     }
 }
 
@@ -36,12 +36,12 @@ export async function getUserById(id: string) {
             where: {
                 id,
             },
-        })
+        });
 
         // Return the user object if found
-        return user
+        return user;
     } catch {
         // Return null if an error occurs during the process
-        return null
+        return null;
     }
 }

@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { register } from '@/actions/auth.action'
+import { register } from '@/actions/auth.action';
 import {
     Form,
     FormControl,
@@ -8,37 +8,37 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { RegisterInput, registerSchema } from '@/schema/auth.schema'
-import { useTransition } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { zodResolver } from '@hookform/resolvers/zod'
-import LoadingButton from '@/components/global/LoadingButton'
-import { Checkbox } from '@/components/ui/checkbox'
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { RegisterInput, registerSchema } from '@/schema/auth.schema';
+import { useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { zodResolver } from '@hookform/resolvers/zod';
+import LoadingButton from '@/components/global/LoadingButton';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export default function RegisterForm() {
-    const [isPending, transitionStartFcn] = useTransition()
+    const [isPending, transitionStartFcn] = useTransition();
 
     const form = useForm<RegisterInput>({
         resolver: zodResolver(registerSchema),
-    })
+    });
 
     const onsubmit = (data: RegisterInput) => {
         transitionStartFcn(() => {
             register(data).then((data) => {
                 if (data.error) {
-                    toast.error(data.error)
+                    toast.error(data.error);
                 }
 
                 if (data.success) {
-                    form.reset()
-                    toast.success(data.success)
+                    form.reset();
+                    toast.success(data.success);
                 }
-            })
-        })
-    }
+            });
+        });
+    };
     return (
         <Form {...form}>
             <form
@@ -175,5 +175,5 @@ export default function RegisterForm() {
                 </LoadingButton>
             </form>
         </Form>
-    )
+    );
 }

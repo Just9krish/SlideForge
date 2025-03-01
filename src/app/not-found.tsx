@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 export default function Component() {
     return (
@@ -9,8 +9,8 @@ export default function Component() {
                         Uh oh! This page was not found.
                     </h1>
                     <p className="max-w-[600px] text-gray-500 dark:text-gray-400 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                        You&apos;ve hit a route that doesn&apos;t exist. Click the button
-                        below to return to the main page.
+                        You&apos;ve hit a route that doesn&apos;t exist. Click
+                        the button below to return to the main page.
                     </p>
                 </div>
                 <Link

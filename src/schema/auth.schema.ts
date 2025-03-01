@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 export const loginSchema = z.object({
     email: z
@@ -8,9 +8,9 @@ export const loginSchema = z.object({
         .string({ required_error: 'Password is required' })
         .min(6, { message: 'Password must be at least 6 characters' }),
     code: z.optional(z.string()),
-})
+});
 
-export type LoginInput = z.infer<typeof loginSchema>
+export type LoginInput = z.infer<typeof loginSchema>;
 
 export const registerSchema = z
     .object({
@@ -28,17 +28,17 @@ export const registerSchema = z
     .refine((data) => data.password === data.confirmPassword, {
         message: "Password don't match!",
         path: ['confirmPassword'],
-    })
+    });
 
-export type RegisterInput = z.infer<typeof registerSchema>
+export type RegisterInput = z.infer<typeof registerSchema>;
 
 export const forgotPasswordSchema = z.object({
     email: z
         .string({ required_error: 'Please enter a email!' })
         .email({ message: 'Please enter a valid email!' }),
-})
+});
 
-export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 
 export const newPasswordSchema = z
     .object({
@@ -50,6 +50,6 @@ export const newPasswordSchema = z
     .refine((data) => data.password === data.confirmPassword, {
         message: "Password don't match!",
         path: ['confirmPassword'],
-    })
+    });
 
-export type NewPasswordInput = z.infer<typeof newPasswordSchema>
+export type NewPasswordInput = z.infer<typeof newPasswordSchema>;
