@@ -19,7 +19,10 @@ export default async function layout({
 
     return (
         <SidebarProvider>
-            <AppSidebar recentProjects={recentProjects.data || []} />
+            <AppSidebar
+                user={session.user}
+                recentProjects={recentProjects.data || []}
+            />
         </SidebarProvider>
     );
 }

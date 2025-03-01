@@ -16,6 +16,8 @@ declare module 'next-auth' {
             isOauth: boolean;
             firstName: string;
             lastName: string;
+            profileImg: string;
+            subscription: boolean | null;
         } & DefaultSession['user'];
     }
 }
@@ -29,15 +31,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
             allowDangerousEmailAccountLinking: true,
             async profile(profile) {
-                // console.log({ profile })
                 const existingUser = await prisma.user.findUnique({
-                    where: {
-                        email: profile.email,
-                    },
+                    where: { email: profile.email },
                 });
-
-                // console.log('existing user', existingUser)
-
                 if (existingUser) {
                     return existingUser;
                 } else {
@@ -54,114 +50,76 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         Credentials({
             async authorize(credentials) {
                 const validatedField = loginSchema.safeParse(credentials);
-
                 if (validatedField.success) {
                     const { email, password } = validatedField.data;
-
                     const user = await getUserByEmail(email);
-
-                    if (!user || !user.password) {
-                        return null;
-                    }
-
+                    if (!user || !user.password) return null;
                     const isPassMatched = await bcrypt.compare(
                         password,
                         user.password
                     );
-
-                    if (isPassMatched) {
-                        return user;
-                    }
+                    if (isPassMatched) return user;
                 }
-
                 return null;
             },
         }),
     ],
     callbacks: {
-        async jwt({ token }) {
-            if (!token.sub) {
-                return token;
+        async jwt({ token, user }) {
+            // On initial sign in, user will be available.
+            if (user) {
+                token.sub = user.id; // Ensure id is stored
+                token.email = user.email;
             }
-            // console.log('token', token)
-            const user = await getUserById(token.sub);
-
-            if (!user) {
-                return token;
-            }
-
-            const existingAccount = await getAcountByUserId(user.id);
-            token.isOauth = !!existingAccount;
-            token.isTwoFactorEnabled = user.isTwoFactorEnabled;
-            token.firstName = user.firstName;
-            token.lastName = user.lastName;
-
+            // Only store minimal info (id and email)
             return token;
         },
         async session({ session, token }) {
-            // console.log('token', token)
             if (token.sub && session.user) {
+                // Fetch the full user info from the database
+                const fullUser = await getUserById(token.sub);
                 session.user.id = token.sub;
-            }
-
-            if (token.role && session.user) {
+                session.user.email = token.email as string;
                 session.user.isTwoFactorEnabled =
-                    token.isTwoFactorEnabled as boolean;
-                session.user.isOauth = token.isOauth as boolean;
-                session.user.firstName = token.firstName as string;
-                session.user.lastName = token.lastName as string;
+                    fullUser?.isTwoFactorEnabled || false;
+                // You may determine isOauth based on your logic, for example:
+                session.user.isOauth = !!(await getAcountByUserId(
+                    fullUser?.id || ''
+                ));
+                session.user.firstName = fullUser?.firstName || '';
+                session.user.lastName = fullUser?.lastName || '';
+                session.user.profileImg = fullUser?.profileImg || '';
+                session.user.subscription = fullUser?.subscription || null;
             }
-
             return session;
         },
-
         async signIn({ user, account }) {
             if (account?.provider !== 'credentials') return true;
-
             if (user.id) {
                 const existingUser = await getUserById(user.id);
-
-                // Prevent unverified user to login
                 if (!existingUser?.emailVerified) return false;
-
-                // TODO: Add 2FA check
                 if (existingUser.isTwoFactorEnabled) {
                     const twoFactorConfirmation =
                         await getTwoFactorConfirmationByUserId(existingUser.id);
-
-                    // console.log('2FA', twoFactorConfirmation)
-
                     if (!twoFactorConfirmation) return false;
-
-                    // Delete twoFactorConfirmation for next sign in
-
                     await prisma.twoFactorConfirmation.delete({
-                        where: {
-                            id: twoFactorConfirmation.id,
-                        },
+                        where: { id: twoFactorConfirmation.id },
                     });
                 }
             } else {
                 return false;
             }
-
             return true;
         },
     },
-
     events: {
         async linkAccount({ user }) {
-            await prisma?.user.update({
-                where: {
-                    id: user.id,
-                },
-                data: {
-                    emailVerified: new Date(),
-                },
+            await prisma.user.update({
+                where: { id: user.id },
+                data: { emailVerified: new Date() },
             });
         },
     },
-
     pages: {
         signIn: '/login',
         error: '/error',

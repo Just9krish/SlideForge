@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarHeader,
     SidebarMenuButton,
 } from '@/components/ui/sidebar';
@@ -12,10 +13,11 @@ import React from 'react';
 import NavMain from './nav-main';
 import { NavItems } from '@/lib/constant';
 import RecentOpen from './recent-open';
+import NavFooter from './nav-footer';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     recentProjects: Project[];
-    user?: User;
+    user: User;
 }
 
 export default function AppSidebar({
@@ -51,6 +53,9 @@ export default function AppSidebar({
                 <NavMain items={NavItems} />
                 <RecentOpen recentProjects={recentProjects} />
             </SidebarContent>
+            <SidebarFooter>
+                <NavFooter user={props.user} />
+            </SidebarFooter>
         </Sidebar>
     );
 }
