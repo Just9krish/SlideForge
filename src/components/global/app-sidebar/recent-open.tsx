@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import {
     SidebarGroup,
@@ -6,8 +8,10 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { useSlideStore } from '@/store/useSlideStore';
 import { Project } from '@prisma/client';
 import { JsonValue } from '@prisma/client/runtime/library';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 interface RecentOpenProps {
@@ -15,6 +19,9 @@ interface RecentOpenProps {
 }
 
 export default function RecentOpen({ recentProjects }: RecentOpenProps) {
+    const router = useRouter();
+    const { setSlides } = useSlideStore();
+
     const handleClick = ({
         projectId,
         slides,
@@ -25,6 +32,9 @@ export default function RecentOpen({ recentProjects }: RecentOpenProps) {
         if (!projectId || !slides) {
             return toast.error('Project not found');
         }
+
+        setSlides(JSON.parse(JSON.stringify(slides)));
+        router.push(`/presentation/${projectId}`);
     };
 
     if (recentProjects.length === 0) {
