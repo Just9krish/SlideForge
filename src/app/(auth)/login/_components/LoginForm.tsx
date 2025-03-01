@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { LoginInput, loginSchema } from '@/schema/auth.schema'
-import { useState, useTransition } from 'react'
-import { login } from '@/actions/auth.action'
-import { useSearchParams } from 'next/navigation'
-import { toast } from 'sonner'
+import Link from 'next/link';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LoginInput, loginSchema } from '@/schema/auth.schema';
+import { useState, useTransition } from 'react';
+import { login } from '@/actions/auth.action';
+import { useSearchParams } from 'next/navigation';
+import { toast } from 'sonner';
 import {
     Form,
     FormControl,
@@ -15,47 +15,42 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import LoadingButton from '@/components/global/LoadingButton'
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import LoadingButton from '@/components/global/LoadingButton';
 
 export default function LoginForm() {
-    const [showTwoAuth, setTwoAuth] = useState(false)
-    const [isPending, transitionStartFcn] = useTransition()
+    const [showTwoAuth, setTwoAuth] = useState(false);
+    const [isPending, transitionStartFcn] = useTransition();
 
-    const searchParams = useSearchParams()
+    const searchParams = useSearchParams();
     const urlError =
         searchParams.get('error') === 'OAuthAccountNotLinked'
             ? 'Email is already in use with different provider!'
-            : ''
+            : '';
 
     const form = useForm<LoginInput>({
         resolver: zodResolver(loginSchema),
-    })
+    });
 
     const onsubmit = (data: LoginInput) => {
         transitionStartFcn(() => {
             login(data)
                 .then((data) => {
-                    if (data.error) {
-                        // form.reset();
-                        toast.error(data.error)
-                    }
-
-                    if (data.success) {
-                        form.reset()
-                        toast.success(data.success)
-                    }
-
-                    if (data.twoAuth) {
-                        setTwoAuth(true)
+                    if ("error" in data) {
+                        toast.error(data.error);
+                    } else if ("success" in data) {
+                        form.reset();
+                        toast.success(data.success);
+                    } else if ("twoAuth" in data) {
+                        setTwoAuth(true);
                     }
                 })
                 .catch(() => {
-                    toast.error('Something went wrong!')
-                })
-        })
-    }
+                    toast.error("Something went wrong!");
+                });
+        });
+    };
 
     return (
         <Form {...form}>
@@ -133,5 +128,5 @@ export default function LoginForm() {
                 </LoadingButton>
             </form>
         </Form>
-    )
+    );
 }
