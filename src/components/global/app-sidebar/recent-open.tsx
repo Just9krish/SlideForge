@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Project } from '@prisma/client';
 import { JsonValue } from '@prisma/client/runtime/library';
+import { toast } from 'sonner';
 
 interface RecentOpenProps {
     recentProjects: Project[];
@@ -21,7 +22,9 @@ export default function RecentOpen({ recentProjects }: RecentOpenProps) {
         projectId: string;
         slides: JsonValue;
     }) => {
-        console.log('clicked');
+        if (!projectId || !slides) {
+            return toast.error('Project not found');
+        }
     };
 
     if (recentProjects.length === 0) {

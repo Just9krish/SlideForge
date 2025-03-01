@@ -56,6 +56,7 @@ export async function getRecentProjects() {
             return errorResponse('Not authenticated', 401);
         }
 
+        // Retrieve the 5 most recently updated projects
         const projects = await prisma.project.findMany({
             where: {
                 userId: session.user.id,

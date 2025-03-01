@@ -27,7 +27,7 @@ export default async function RootLayout({
                         disableTransitionOnChange
                     >
                         {children}
-                        <Toaster />
+                        <Toaster richColors closeButton />
                     </ThemeProvider>
                 </body>
             </html>
