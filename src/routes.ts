@@ -3,14 +3,14 @@
  * This routes does not required authentication
  * @type {string[]}
  */
-export const publicRoutes = ['/']
+export const publicRoutes = ['/'];
 
 /**
  * An array of routes that are protected
  * This routes does required authentication
  * @type {string[]}
  */
-export const authRoutes = ['/login', '/signup', '/error']
+export const authRoutes = ['/login', '/signup', '/error'];
 
 /**
  * The prefix for API authentication routes
@@ -18,7 +18,7 @@ export const authRoutes = ['/login', '/signup', '/error']
  * authentication purposes
  * @type {string}
  */
-export const apiAuthPrefix = '/api/auth'
+export const apiAuthPrefix = '/api/auth';
 
 /**
  * The prefix for API authentication routes
@@ -26,4 +26,4 @@ export const apiAuthPrefix = '/api/auth'
  * authentication purposes
  * @type {string}
  */
-export const DEFAULT_LOGIN_REDIRECT = '/'
+export const DEFAULT_LOGIN_REDIRECT = '/dashboard';
