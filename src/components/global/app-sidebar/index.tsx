@@ -30,26 +30,26 @@ export default function AppSidebar({
             {...props}
             className="max-w-52 bg-background"
         >
-            <SidebarHeader className=" pt-6 px-3 pb-0">
+            <SidebarHeader className=" pt-6 px-2 pb-0">
                 <SidebarMenuButton
                     size="lg"
-                    className="data-[state=open]:text-sidebar-accent-foreground"
+                    className="data-[state=open]:text-sidebar-accent-foreground gap-4"
                 >
                     <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground">
                         |
                         <Avatar className="rounded-full size-10">
                             <AvatarImage src={'/logo.png'} />
-                            <AvatarFallback className="rounded-lg">
-                                PPT
+                            <AvatarFallback className="rounded-lg text-foreground">
+                                SF
                             </AvatarFallback>
                         </Avatar>
                     </div>
-                    <span className="truncate text-primary font-semibold text-3xl">
-                        PPT
+                    <span className="truncate text-primary font-semibold text-2xl">
+                        SlideForge
                     </span>
                 </SidebarMenuButton>
             </SidebarHeader>
-            <SidebarContent className="gap-6 mt-10 px-3">
+            <SidebarContent className="gap-6 mt-10 px-2">
                 <NavMain items={NavItems} />
                 <RecentOpen recentProjects={recentProjects} />
             </SidebarContent>

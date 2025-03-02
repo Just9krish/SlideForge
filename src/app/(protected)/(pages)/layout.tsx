@@ -1,7 +1,8 @@
 import { getRecentProjects } from '@/actions/projects.action';
 import { auth } from '@/auth';
 import AppSidebar from '@/components/global/app-sidebar';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import Topbar from '@/components/global/top-bar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { redirect } from 'next/navigation';
 
 export default async function layout({
@@ -23,6 +24,9 @@ export default async function layout({
                 user={session.user}
                 recentProjects={recentProjects.data || []}
             />
+            <SidebarInset>
+                <Topbar>{children}</Topbar>
+            </SidebarInset>
         </SidebarProvider>
     );
 }

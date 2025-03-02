@@ -7,6 +7,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { createFullName, createFullNameWithInitials } from '@/lib/utils';
 import { User } from '@prisma/client';
 import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { useState } from 'react';
@@ -31,15 +32,13 @@ export default function NavFooter({ user }: { user: User }) {
                                         Creative AI
                                     </span>
                                 </p>
-                                <span className="text-sm dark:text-secondary">
+                                <span className="text-sm dark:text-muted-foreground">
                                     Unlock all the feature including AI and more
                                 </span>
                             </div>
                             <div className="w-full bg-site-gradient p-[1px] rounded-full">
                                 <Button
-                                    variant={'default'}
-                                    className="w-full bg-background/80 hover:bg-background/80 text-primary rounded-full font-bold"
-                                    size={'lg'}
+                                    className="w-full bg-background hover:bg-background/90 text-primary rounded-full font-bold"
                                     onClick={handleSubscribe}
                                 >
                                     {isLoading
@@ -54,12 +53,23 @@ export default function NavFooter({ user }: { user: User }) {
                         size={'lg'}
                         className="data-[state=open]:text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent"
                     >
-                        <Avatar className="size-10 rounded-full">
+                        <Avatar>
                             <AvatarImage src={user.profileImg || ''} />
-                            <AvatarFallback className="rounded-full">
-                                {user.firstName.split('')[0]}
+                            <AvatarFallback>
+                                {createFullNameWithInitials(
+                                    user.firstName,
+                                    user.lastName
+                                )}
                             </AvatarFallback>
                         </Avatar>
+                        <div className=" grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+                            <span className="truncate font-semibold">
+                                {createFullName(user.firstName, user.lastName)}
+                            </span>
+                            <span className="truncate text-muted-foreground">
+                                {user.email}
+                            </span>
+                        </div>
                     </SidebarMenuButton>
                 </div>
             </SidebarMenuItem>
