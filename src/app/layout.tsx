@@ -4,6 +4,7 @@ import './globals.css';
 import { ThemeProvider } from '@/providers/themeProvider';
 import { Toaster } from '@/components/ui/sonner';
 import { auth } from '@/auth';
+import AlertDialogComponent from '@/components/global/alert-dialog/AlertDialog';
 
 export const metadata: Metadata = {
     title: 'PPT Creator',
@@ -28,6 +29,7 @@ export default async function RootLayout({
                     >
                         {children}
                         <Toaster richColors closeButton />
+                        <AlertDialogComponent />
                     </ThemeProvider>
                 </body>
             </html>

@@ -64,3 +64,37 @@ export type ContentType =
     | 'customButton'
     | 'table'
     | 'tableOfContents';
+
+export interface Theme {
+    name: string;
+    fontFamily: string;
+    fontColor: string;
+    backgroundColor: string;
+    slideBackgroundColor: string;
+    accentColor: string;
+    gradientBackground?: string;
+    sidebarColor?: string;
+    navbarColor?: string;
+    type: 'light' | 'dark';
+}
+
+export interface AlertState {
+    isOpen: boolean;
+    title: string;
+    content: string;
+    cancelText: string;
+    confirmText: string;
+    hideCancelButton: boolean;
+    onConfirm?: () => void;
+    onCancel?: () => void;
+    showAlert: (options: {
+        title?: string;
+        content?: string;
+        cancelText?: string;
+        confirmText?: string;
+        hideCancelButton?: boolean;
+        onConfirm?: () => void;
+        onCancel?: () => void;
+    }) => void;
+    hideAlert: () => void;
+}

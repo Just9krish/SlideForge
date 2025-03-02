@@ -74,3 +74,117 @@ export async function getRecentProjects() {
         return errorResponse('Internal server error', 500);
     }
 }
+
+/**
+ * Recovers a deleted project for the authenticated user.
+ *
+ * This function updates the status of a deleted project to be active,
+ * allowing it to be accessed again by the user.
+ *
+ * @param {string} projectId - The ID of the project to be recovered.
+ * @returns {Promise<ApiResponse<Project>>} - A response object containing the recovered project or an error message.
+ */
+export const recoverProject = async (projectId: string) => {
+    try {
+        // Validate the project ID
+        if (!projectId) {
+            return errorResponse('Project ID is required', 400);
+        }
+
+        // Authenticate the user's session
+        const session = await auth();
+
+        // Check for a valid session and user
+        if (!session || !session.user) {
+            return errorResponse('Not authenticated', 401);
+        }
+
+        // Find the deleted project for the user
+        const project = await prisma.project.findUnique({
+            where: {
+                id: projectId,
+                userId: session.user.id,
+                isDeleted: true,
+            },
+        });
+
+        // Return error if project is not found
+        if (!project) {
+            return errorResponse('Project not found', 404);
+        }
+
+        // Update the project status to active
+        const updatedProject = await prisma.project.update({
+            where: {
+                id: projectId,
+            },
+            data: {
+                isDeleted: false,
+            },
+        });
+
+        // Return success response with the updated project
+        return successResponse(
+            updatedProject,
+            'Project recovered successfully'
+        );
+    } catch (error) {
+        // Log and return an internal server error response
+        console.log({ error });
+        return errorResponse('Internal server error', 500);
+    }
+};
+
+/**
+ * Deletes a project for the authenticated user.
+ *
+ * This function updates the status of a project to be deleted,
+ * preventing it from being accessed again by the user.
+ *
+ * @param {string} projectId - The ID of the project to be deleted.
+ * @returns {Promise<ApiResponse<Project>>} - A response object containing the deleted project or an error message.
+ */
+export const deleteProject = async (projectId: string) => {
+    try {
+        // Validate the project ID
+        if (!projectId) {
+            return errorResponse('Project ID is required', 400);
+        }
+
+        // Authenticate the user's session
+        const session = await auth();
+
+        // Check for a valid session and user
+        if (!session || !session.user) {
+            return errorResponse('Not authenticated', 401);
+        }
+
+        // Find the project for the user
+        const project = await prisma.project.findUnique({
+            where: {
+                id: projectId,
+                userId: session.user.id,
+            },
+        });
+        if (!project) {
+            return errorResponse('Project not found', 404);
+        }
+
+        // Update the project status to deleted
+        const updatedProject = await prisma.project.update({
+            where: {
+                id: projectId,
+            },
+            data: {
+                isDeleted: true,
+            },
+        });
+
+        // Return success response with the updated project
+        return successResponse(updatedProject, 'Project deleted successfully');
+    } catch (error) {
+        // Log and return an internal server error response
+        console.log({ error });
+        return errorResponse('Internal server error', 500);
+    }
+};
