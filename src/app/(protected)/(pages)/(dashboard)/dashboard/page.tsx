@@ -1,6 +1,5 @@
 import { getAllProjects } from '@/actions/projects.action';
 import Notfound from '@/components/global/not-found';
-import ProjectCard from '@/components/global/project-card';
 import Projects from '@/components/global/projects';
 
 export default async function page() {
@@ -17,13 +16,6 @@ export default async function page() {
                     </p>
                 </div>
             </div>
-            <ProjectCard
-                isDeleted={true}
-                projectId="dd"
-                title="Create new project"
-                themeName="Default"
-                createdAt={new Date()}
-            />
 
             {projects.data?.length ? (
                 <Projects projects={projects.data} />

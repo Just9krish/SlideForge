@@ -23,7 +23,6 @@ export default function Projects({ projects }: ProjectsProps) {
                     title={project.title}
                     isDeleted={project.isDeleted}
                     createdAt={project.createdAt}
-                    src={project.thumbnail || ''}
                     slidesData={project.slides}
                 />
             ))}

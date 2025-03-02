@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { cn, timeAgo } from '@/lib/utils';
 import { Themes } from '@/lib/constant';
 import { containerItemVariants } from '@/lib/variants';
@@ -19,7 +18,6 @@ interface ProjectCardProps {
     title: string;
     isDeleted: boolean;
     createdAt: Date;
-    src: string;
     slidesData: JsonValue;
     themeName: string;
 }
@@ -29,7 +27,6 @@ export default function ProjectCard({
     title,
     isDeleted,
     createdAt,
-    src,
     slidesData,
     themeName,
 }: ProjectCardProps) {
