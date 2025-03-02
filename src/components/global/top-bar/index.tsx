@@ -5,11 +5,7 @@ import ThemeSwitcher from './theme-switcher';
 import ImportButton from './import-button';
 import NewProjectButton from './new-project-button';
 
-interface TopbarProps {
-    children: React.ReactNode;
-}
-
-export default function Topbar({ }: TopbarProps) {
+export default function Topbar() {
     return (
         <header className="sticky top-0 z-10 shrink-0 flex items-center flex-wrap gap-1 bg-background p-4 justify-between">
             <SidebarTrigger className="-ml-1" />
