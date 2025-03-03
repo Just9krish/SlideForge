@@ -1,7 +1,7 @@
 import { AlertState } from '@/lib/types';
 import { create } from 'zustand';
 
-export const useAlertStore = create<AlertState>((set) => ({
+const useAlertStore = create<AlertState>((set) => ({
     isOpen: false,
     title: '',
     content: '',
@@ -33,3 +33,5 @@ export const useAlertStore = create<AlertState>((set) => ({
             onCancel: undefined,
         })),
 }));
+
+export default useAlertStore;

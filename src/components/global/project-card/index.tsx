@@ -3,15 +3,15 @@
 import { cn, timeAgo } from '@/lib/utils';
 import { Themes } from '@/lib/constant';
 import { containerItemVariants } from '@/lib/variants';
-import { useSlideStore } from '@/store/useSlideStore';
 import { JsonValue } from '@prisma/client/runtime/library';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import ThumbnailPreview from './thumbnail-preview';
 import { Button } from '@/components/ui/button';
-import { useAlertStore } from '@/store/useAlertDialogStore';
 import { toast } from 'sonner';
 import { deleteProject, recoverProject } from '@/actions/projects.action';
+import useSlideStore from '@/store/useSlideStore';
+import useAlertStore from '@/store/useAlertDialogStore';
 
 interface ProjectCardProps {
     projectId: string;
@@ -51,7 +51,7 @@ export default function ProjectCard({
                 try {
                     const response = await recoverProject(projectId);
                     if (response.error) {
-                        toast.error(response.message);
+                        toast.error(response.error.message);
                     } else {
                         toast.success(response.message);
                         router.refresh();
@@ -80,7 +80,7 @@ export default function ProjectCard({
                 try {
                     const data = await deleteProject(projectId);
                     if (data.error) {
-                        toast.error(data.message);
+                        toast.error(data.error.message);
                     } else {
                         toast.success(data.message);
                         router.refresh();

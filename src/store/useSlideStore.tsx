@@ -7,7 +7,7 @@ interface SlideState {
     setSlides: (slide: Slide[]) => void;
 }
 
-export const useSlideStore = create(
+const useSlideStore = create(
     persist<SlideState>(
         (set) => ({
             slides: [],
@@ -16,3 +16,5 @@ export const useSlideStore = create(
         { name: 'slides-storage' }
     )
 );
+
+export default useSlideStore;

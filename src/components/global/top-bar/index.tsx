@@ -7,7 +7,7 @@ import NewProjectButton from './new-project-button';
 
 export default function Topbar() {
     return (
-        <header className="sticky top-0 z-10 shrink-0 flex items-center flex-wrap gap-1 bg-background p-4 justify-between">
+        <header className="sticky top-0 z-10 shrink-0 flex items-center flex-wrap gap-1 bg-background  justify-between">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
             <div className="flex items-center justify-between gap-16 flex-wrap w-full">

@@ -10,7 +10,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { useAlertStore } from '@/store/useAlertDialogStore';
+import useAlertStore from '@/store/useAlertDialogStore';
 
 export default function AlertDialogComponent() {
     const {

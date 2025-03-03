@@ -25,8 +25,10 @@ export default async function layout({
                 recentProjects={recentProjects.data || []}
             />
             <SidebarInset>
-                <Topbar />
-                {children}
+                <div className="p-4 space-y-6">
+                    <Topbar />
+                    {children}
+                </div>
             </SidebarInset>
         </SidebarProvider>
     );

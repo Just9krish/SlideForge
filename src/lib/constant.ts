@@ -344,3 +344,28 @@ export const Themes: Theme[] = [
         type: 'dark',
     },
 ];
+
+export const CREATE_PROJECT_CARD = [
+    {
+        title: 'Use a',
+        highlightedText: 'Template',
+        description:
+            'Write a prompt and leave everything else for us to handle.',
+        type: 'template',
+    },
+    {
+        title: 'Generate with',
+        highlightedText: 'AI',
+        description:
+            'Write a prompt and leave everything else for us to handle.',
+        type: 'create-ai',
+        highlight: true,
+    },
+    {
+        title: 'Start from',
+        highlightedText: 'Scratch',
+        description:
+            'Write a prompt and leave everything else for us to handle.',
+        type: 'create-scratch',
+    },
+];
