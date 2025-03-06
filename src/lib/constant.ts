@@ -355,7 +355,7 @@ export const CREATE_PROJECT_CARD = [
     },
     {
         title: 'Generate with',
-        highlightedText: 'AI',
+        highlightedText: 'Creative AI',
         description:
             'Write a prompt and leave everything else for us to handle.',
         type: 'create-ai',

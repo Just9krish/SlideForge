@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { CREATE_PROJECT_CARD } from '@/lib/constant';
 import { cn } from '@/lib/utils';
 import { containerItemVariants, containerVariants } from '@/lib/variants';
@@ -7,7 +8,7 @@ interface CreateProjectProps {
     onSelectOption: (option: string) => void;
 }
 
-export default function CreateProject({}: CreateProjectProps) {
+export default function CreateProject({ onSelectOption }: CreateProjectProps) {
     return (
         <motion.div
             className="space-y-8"
@@ -19,10 +20,10 @@ export default function CreateProject({}: CreateProjectProps) {
                 className="text-center space-y-2"
                 variants={containerItemVariants}
             >
-                <h1 className="text-4xl font-bold text-primary">
+                <h1 className="text-4xl font-bold text-primary font-heading">
                     How would you like to get started?
                 </h1>
-                <p className="text-secondary">
+                <p className="text-muted-foreground">
                     Choose your preferred method to begin
                 </p>
             </motion.div>
@@ -42,17 +43,60 @@ export default function CreateProject({}: CreateProjectProps) {
                         }}
                         className={cn(
                             'rounded-xl p-[1px] transition-all duration-300 ease-in-out',
-                            project.highlight
-                                ? 'bg-site-gradient'
-                                : 'hover:border-purple-500 border'
-                        )}
+                            project.highlight ? 'bg-site-gradient' : 'hover:border-gradient'
+                          )}
                     >
-                        <h3 className="text-xl font-semibold text-primary">
-                            Create a new project
-                        </h3>
-                        <p className="text-secondary">
-                            Start a new project from scratch
-                        </p>
+                        <motion.div
+                            className="w-full p-4 flex flex-col gap-6 items-start bg-background rounded-xl"
+                            whileHover={{ transition: { duration: 0.1 } }}
+                        >
+                            <div className="flex flex-col items-start w-full gap-3">
+                                <div>
+                                    <p className="text-primary text-lg font-semibold">
+                                        {project.title}
+                                    </p>
+                                    <p
+                                        className={cn(
+                                            'text-4xl font-bold font-heading',
+                                            project.highlight
+                                                ? 'primary-text'
+                                                : 'text-primary'
+                                        )}
+                                    >
+                                        {project.highlightedText}
+                                    </p>
+                                </div>
+                                <p className="text-muted-foreground text-sm font-normal">
+                                    {project.description}
+                                </p>
+                            </div>
+                            <motion.div
+                                className="self-end"
+                                whileHover={{
+                                    scale: 1.05,
+                                    transition: { duration: 0.1 },
+                                }}
+                                whileTap={{
+                                    scale: 0.95,
+                                    transition: { duration: 0.1 },
+                                }}
+                            >
+                                <Button
+                                    variant={
+                                        project.highlight
+                                            ? 'default'
+                                            : 'outline'
+                                    }
+                                    className="w-fit rounded-xl font-bold"
+                                    size={'sm'}
+                                    onClick={() => onSelectOption(project.type)}
+                                >
+                                    {project.highlight
+                                        ? 'Generate'
+                                        : 'Continue'}
+                                </Button>
+                            </motion.div>
+                        </motion.div>
                     </motion.div>
                 ))}
             </motion.div>

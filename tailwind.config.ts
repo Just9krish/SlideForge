@@ -90,6 +90,10 @@ export default {
                 'accordion-down': 'accordion-down 0.2s ease-out',
                 'accordion-up': 'accordion-up 0.2s ease-out',
             },
+            fontFamily: {
+                body: ['var(--font-roboto)', 'var(--font-body-fallback)'],
+                heading: ['var(--font-montserrat)', 'var(--font-heading-fallback)'],
+            }
         },
     },
     plugins: [require('tailwindcss-animate')],

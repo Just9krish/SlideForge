@@ -27,8 +27,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma),
     providers: [
         Google({
-            clientId: process.env.GOOGLE_CLIENT_ID as string,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+            clientId: process.env.AUTH_GOOGLE_CLIENT_ID as string,
+            clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET as string,
             allowDangerousEmailAccountLinking: true,
             async profile(profile) {
                 const existingUser = await prisma.user.findUnique({
@@ -111,7 +111,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
             return true;
         },
-    },
+    },  
     events: {
         async linkAccount({ user }) {
             await prisma.user.update({
