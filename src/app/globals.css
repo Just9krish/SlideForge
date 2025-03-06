@@ -96,8 +96,38 @@
 }
 
 @layer components {
-    .hover\:border-gradient:hover {
-      border: 2px solid transparent;
-      border-image: linear-gradient(180deg, #f55c7a 0%, #f6bc66 100%) 1 round;
+    .border-gradient {
+        position: relative;
+        display: inline-block;
+        border: 2px solid hsl(var(--muted));
+        border-radius: 12px; /* Adjust as needed */
+        transition: border-color 0.3s ease-in-out;
     }
-  }
+
+    .border-gradient::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 2px; /* Adjust thickness */
+        background: linear-gradient(180deg, #f55c7a 0%, #f6bc66 100%);
+        -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+        mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0; /* Initially hidden */
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .border-gradient:hover {
+        border-color: transparent; /* Hide gray border on hover */
+    }
+
+    .border-gradient:hover::before {
+        opacity: 1;
+    }
+}

@@ -111,7 +111,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
             return true;
         },
-    },  
+    },
     events: {
         async linkAccount({ user }) {
             await prisma.user.update({

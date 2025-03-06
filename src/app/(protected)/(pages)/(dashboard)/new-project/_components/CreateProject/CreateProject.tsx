@@ -43,8 +43,10 @@ export default function CreateProject({ onSelectOption }: CreateProjectProps) {
                         }}
                         className={cn(
                             'rounded-xl p-[1px] transition-all duration-300 ease-in-out',
-                            project.highlight ? 'bg-site-gradient' : 'hover:border-gradient'
-                          )}
+                            project.highlight
+                                ? 'bg-site-gradient'
+                                : 'border-gradient'
+                        )}
                     >
                         <motion.div
                             className="w-full p-4 flex flex-col gap-6 items-start bg-background rounded-xl"

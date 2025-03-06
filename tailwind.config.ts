@@ -92,8 +92,11 @@ export default {
             },
             fontFamily: {
                 body: ['var(--font-roboto)', 'var(--font-body-fallback)'],
-                heading: ['var(--font-montserrat)', 'var(--font-heading-fallback)'],
-            }
+                heading: [
+                    'var(--font-montserrat)',
+                    'var(--font-heading-fallback)',
+                ],
+            },
         },
     },
     plugins: [require('tailwindcss-animate')],
