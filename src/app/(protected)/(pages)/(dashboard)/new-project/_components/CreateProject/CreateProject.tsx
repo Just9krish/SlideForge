@@ -1,14 +1,19 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { CREATE_PROJECT_CARD } from '@/lib/constant';
 import { cn } from '@/lib/utils';
 import { containerItemVariants, containerVariants } from '@/lib/variants';
 import { motion } from 'framer-motion';
+import RecentPrompt from '../GenerateAI/RecentPrompt';
+import usePromptStore from '@/store/usePromptStore';
 
 interface CreateProjectProps {
     onSelectOption: (option: string) => void;
 }
 
 export default function CreateProject({ onSelectOption }: CreateProjectProps) {
+    const { prompts } = usePromptStore();
     return (
         <motion.div
             className="space-y-8"
@@ -102,6 +107,8 @@ export default function CreateProject({ onSelectOption }: CreateProjectProps) {
                     </motion.div>
                 ))}
             </motion.div>
+
+            {prompts.length > 0 && <RecentPrompt />}
         </motion.div>
     );
 }

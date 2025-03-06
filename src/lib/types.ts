@@ -98,3 +98,16 @@ export interface AlertState {
     }) => void;
     hideAlert: () => void;
 }
+
+export interface Prompt {
+    id: string;
+    createdAt: Date;
+    title: string;
+    outlines: OutlineCard[];
+}
+
+export interface OutlineCard {
+    id: string;
+    title: string;
+    order: number;
+}

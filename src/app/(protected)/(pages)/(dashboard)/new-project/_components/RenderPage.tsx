@@ -7,10 +7,14 @@ import CreateProject from './CreateProject/CreateProject';
 export default function RenderPage() {
     const { page } = usePromptStore();
 
+    const handleSelectOption = (option: string) => {
+        console.log(option);
+    };
+
     const renderStep = () => {
         switch (page) {
             case 'create':
-                return <CreateProject />;
+                return <CreateProject onSelectOption={handleSelectOption} />;
             case 'create-ai':
                 return <div>Create AI</div>;
             case 'create-scratch':
