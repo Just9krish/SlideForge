@@ -8,16 +8,23 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { createFullName, createFullNameWithInitials } from '@/lib/utils';
-import { User } from '@prisma/client';
 import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
-export default function NavFooter({ user }: { user: User }) {
+export default function NavFooter() {
     const [isLoading, setIsLoading] = useState(false);
+
+    const { status, data } = useSession();
 
     const handleSubscribe = async () => {
         console.log('object');
     };
+
+    if (status !== 'authenticated') {
+        return null;
+    }
+    const { user } = data;
 
     return (
         <SidebarMenu>

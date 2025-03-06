@@ -8,7 +8,7 @@ import {
     SidebarHeader,
     SidebarMenuButton,
 } from '@/components/ui/sidebar';
-import { Project, User } from '@prisma/client';
+import { Project } from '@prisma/client';
 import React from 'react';
 import NavMain from './nav-main';
 import { NavItems } from '@/lib/constant';
@@ -17,7 +17,6 @@ import NavFooter from './nav-footer';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     recentProjects: Project[];
-    user: User;
 }
 
 export default function AppSidebar({
@@ -54,7 +53,7 @@ export default function AppSidebar({
                 <RecentOpen recentProjects={recentProjects} />
             </SidebarContent>
             <SidebarFooter>
-                <NavFooter user={props.user} />
+                <NavFooter />
             </SidebarFooter>
         </Sidebar>
     );
