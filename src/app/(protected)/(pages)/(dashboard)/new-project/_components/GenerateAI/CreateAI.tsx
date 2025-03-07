@@ -13,13 +13,20 @@ import useCreativeAiStore from '@/store/useCreativeAiStore';
 import { motion } from 'framer-motion';
 import { ChevronLeft, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
+import CardList from '../Common/CardList';
 
 interface CreateAIProps {
     onBack: () => void;
 }
 export default function CreateAI({ onBack }: CreateAIProps) {
-    const { currentAiPrompt, setCurrentAiPrompt, outlines, removeAllOutlines } =
-        useCreativeAiStore();
+    const {
+        currentAiPrompt,
+        setCurrentAiPrompt,
+        outlines,
+        removeAllOutlines,
+        addOutline,
+        addMultipleOutlines,
+    } = useCreativeAiStore();
 
     const [editingCard, setEditingCard] = useState<string | null>(null);
     const [selectedCard, setSelectedCard] = useState<string | null>(null);
@@ -119,9 +126,26 @@ export default function CreateAI({ onBack }: CreateAIProps) {
                     loading={isGenerating}
                     className="text-lg font-medium"
                 >
-                    {isGenerating ? 'Generating...' : 'Generate'}
+                    {isGenerating ? 'Generating...' : 'Generate Outline'}
                 </LoadingButton>
             </div>
+            <CardList
+                outlines={outlines}
+                addOutline={addOutline}
+                addMultipleOutlines={addMultipleOutlines}
+                editText={editText}
+                editingCard={editingCard}
+                selectedCard={selectedCard}
+                onCardSelect={setSelectedCard}
+                onEditChange={setEditText}
+                setEditText={setEditText}
+                setEditingCard={setEditingCard}
+                setSelectedCard={setSelectedCard}
+                onCardDoubleClick={(cardId, title) => {
+                    setEditingCard(cardId);
+                    setEditText(title);
+                }}
+            />
         </motion.div>
     );
 }
