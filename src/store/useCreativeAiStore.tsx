@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 
 interface CreativeAiStore {
     outlines: OutlineCard[] | [];
-    currentAiPrompt: string | null;
+    currentAiPrompt: string | '';
     addMultipleOutlines: (outlines: OutlineCard[]) => void;
     addOutline: (outline: OutlineCard) => void;
     removeOutline: (outlineId: string) => void;
@@ -16,7 +16,7 @@ const useCreativeAiStore = create<CreativeAiStore>()(
     persist(
         (set) => ({
             outlines: [],
-            currentAiPrompt: null,
+            currentAiPrompt: '',
             addMultipleOutlines: (outlines: OutlineCard[]) =>
                 set((state) => ({
                     outlines: [...outlines, ...state.outlines],
