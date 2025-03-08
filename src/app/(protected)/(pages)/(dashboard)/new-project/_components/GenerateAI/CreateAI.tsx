@@ -14,6 +14,10 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 import CardList from '../Common/CardList';
+import usePromptStore from '@/store/usePromptStore';
+import RecentPrompt from './RecentPrompt';
+import { toast } from 'sonner';
+import { generateCreativePrompt } from '@/actions/openai.actions';
 
 interface CreateAIProps {
     onBack: () => void;
@@ -27,6 +31,8 @@ export default function CreateAI({ onBack }: CreateAIProps) {
         addOutline,
         addMultipleOutlines,
     } = useCreativeAiStore();
+
+    const { prompts } = usePromptStore();
 
     const [editingCard, setEditingCard] = useState<string | null>(null);
     const [selectedCard, setSelectedCard] = useState<string | null>(null);
@@ -43,7 +49,20 @@ export default function CreateAI({ onBack }: CreateAIProps) {
     };
 
     // WIP: Add generate online
-    const generateOnline = async () => {};
+    const generateOnline = async () => {
+        if (!currentAiPrompt) {
+            toast.info('Please enter a prompt to generate outline.');
+            return;
+        }
+
+        setIsGenerating(true);
+
+        const data = await generateCreativePrompt(currentAiPrompt);
+
+        // WIP: use open ai and complet it.
+    };
+
+    // WIP: const handleGenerate = async () => {}
 
     return (
         <motion.div
@@ -146,6 +165,14 @@ export default function CreateAI({ onBack }: CreateAIProps) {
                     setEditText(title);
                 }}
             />
+
+            {outlines.length > 0 && (
+                <LoadingButton loading={isGenerating} className="w-full">
+                    {isGenerating ? 'Generating...' : 'Generate'}
+                </LoadingButton>
+            )}
+
+            {prompts.length > 0 && <RecentPrompt />}
         </motion.div>
     );
 }

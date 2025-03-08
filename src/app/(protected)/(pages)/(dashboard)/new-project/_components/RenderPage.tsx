@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import CreateProject from './CreateProject/CreateProject';
 import { useRouter } from 'next/navigation';
 import CreateAI from './GenerateAI/CreateAI';
+import CreateScratch from './Scratch/CreateScratch';
 
 export default function RenderPage() {
     const { page, setPage } = usePromptStore();
@@ -15,6 +16,7 @@ export default function RenderPage() {
     };
 
     const handleSelectOption = (option: string) => {
+        console.log({ option });
         if (option === 'template') {
             router.push('/templates');
         } else if (option === 'create-scratch') {
@@ -31,7 +33,7 @@ export default function RenderPage() {
             case 'create-ai':
                 return <CreateAI onBack={handleCreateProject} />;
             case 'create-scratch':
-                return <div>Create Scratch</div>;
+                return <CreateScratch onBack={handleCreateProject} />;
             default:
                 return <div>Default</div>;
         }

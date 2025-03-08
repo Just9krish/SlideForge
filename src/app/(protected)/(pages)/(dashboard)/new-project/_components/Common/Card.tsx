@@ -22,9 +22,9 @@ interface CardProps {
     onDeleteClick: () => void;
     dragHandler: {
         onDragStart: (event: React.DragEvent<HTMLDivElement>) => void;
-        onDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
         onDragEnd: (event: React.DragEvent<HTMLDivElement>) => void;
     };
+    onDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
     dragOverStyles: React.CSSProperties;
 }
 export default function Card({
@@ -40,6 +40,7 @@ export default function Card({
     onCardClick,
     onCardDoubleClick,
     onDeleteClick,
+    onDragOver,
 }: CardProps) {
     const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -57,7 +58,12 @@ export default function Card({
             }}
             className="relative"
         >
-            <div draggable style={dragOverStyles} {...dragHandler}>
+            <div
+                draggable
+                style={dragOverStyles}
+                {...dragHandler}
+                onDragOver={onDragOver}
+            >
                 <UICard
                     className={cn(
                         'p-4 cursor-grab active:cursor-grabbing',
