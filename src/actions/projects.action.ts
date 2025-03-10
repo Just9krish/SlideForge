@@ -3,6 +3,7 @@
 import { auth } from '@/auth';
 import { errorResponse, successResponse } from '@/lib/apiResponse';
 import prisma from '@/lib/prisma';
+import { OutlineCard } from '@/lib/types';
 
 /**
  * Fetches all projects for the authenticated user.
@@ -188,3 +189,55 @@ export const deleteProject = async (projectId: string) => {
         return errorResponse('Internal server error', 500);
     }
 };
+
+/**
+ * Creates a new project for the authenticated user.
+ *
+ * This function authenticates the user's session, validates input data, and
+ * creates a new project in the database with the provided title and outlines.
+ *
+ * @param {string} title - The title of the project to be created.
+ * @param {OutlineCard[]} outlines - An array of outlines associated with the project.
+ * @returns {Promise<ApiResponse<Project>>} - A response object containing the created project or an error message.
+ */
+export async function createProject(title: string, outlines: OutlineCard[]) {
+    try {
+        // Authenticate the user's session
+        const session = await auth();
+
+        // Check for a valid session and user
+        if (!session || !session.user || !session.user.id) {
+            return errorResponse('Not authenticated', 401);
+        }
+
+        // Validate the input fields
+        if (!title || !outlines || !outlines.length) {
+            return errorResponse('Missing required fields', 400);
+        }
+
+        // Extract titles from the outlines
+        const allOutlines = outlines.map((o) => o.title);
+
+        // Create a new project in the database
+        const project = await prisma.project.create({
+            data: {
+                title,
+                userId: session.user.id,
+                outlines: allOutlines,
+                createdAt: new Date(),
+            },
+        });
+
+        // Check if project creation was successful
+        if (!project) {
+            return errorResponse('Failed to create project', 500);
+        }
+
+        // Return success response with the created project
+        return successResponse(project, 'Project created successfully');
+    } catch (error) {
+        // Log and return an internal server error response
+        console.log({ error });
+        return errorResponse('Internal server error', 500);
+    }
+}
