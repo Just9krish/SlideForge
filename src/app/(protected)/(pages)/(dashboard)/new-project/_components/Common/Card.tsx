@@ -69,7 +69,7 @@ export default function Card({
                         'p-4 cursor-grab active:cursor-grabbing',
                         isEditing || isSelected
                             ? 'border-primary bg-transparent'
-                            : 'bg-primary/90'
+                            : 'bg-primary-foreground'
                     )}
                     onClick={onCardClick}
                     onDoubleClick={onCardDoubleClick}

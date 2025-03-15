@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import { createProject } from '@/actions/projects.action';
 import useSlideStore from '@/store/useSlideStore';
 import { useRouter } from 'next/navigation';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ScratchPageProps {
     onBack: () => void;
@@ -36,7 +37,7 @@ export default function CreateScratch({ onBack }: ScratchPageProps) {
 
     const handleAddCard = () => {
         const newCard = {
-            id: Date.now().toString(),
+            id: uuidv4(),
             title: editText || 'New Section',
             order: outlines.length + 1,
         };
@@ -62,6 +63,8 @@ export default function CreateScratch({ onBack }: ScratchPageProps) {
             toast.success(res.message || 'Project created successfully');
             resetOutlines();
             router.push(`/presentation/${res.data.id}/select-theme`);
+        } else {
+            toast.error('Something went wrong');
         }
     };
 

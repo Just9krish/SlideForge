@@ -120,7 +120,7 @@ export default function CardList({
         }, 0);
     };
 
-    const onDragEnd = (e) => {
+    const onDragEnd = (e: React.DragEvent) => {
         e.preventDefault();
         setDraggedItem(null);
         setDragOverIndex(null);
@@ -147,7 +147,28 @@ export default function CardList({
         }
     };
 
-    const onAddCard = (index: number) => {};
+    const onAddCard = (index: number) => {
+        const newCard: OutlineCard = {
+            id: Math.random().toString(36).substring(2, 9),
+            title: 'New Card',
+            order: (index !== undefined ? index + 1 : outlines.length) + 1,
+        };
+
+        const updatedOutlines =
+            index !== undefined
+                ? [
+                      ...outlines.slice(0, index + 1),
+                      newCard,
+                      ...outlines.slice(index + 1).map((item) => ({
+                          ...item,
+                          order: item.order + 1,
+                      })),
+                  ]
+                : [...outlines, newCard];
+
+        addMultipleOutlines(updatedOutlines);
+        setEditText('');
+    };
 
     return (
         <motion.div
