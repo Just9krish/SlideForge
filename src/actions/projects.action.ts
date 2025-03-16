@@ -241,3 +241,49 @@ export async function createProject(title: string, outlines: OutlineCard[]) {
         return errorResponse('Internal server error', 500);
     }
 }
+
+/**
+ * Fetches a project by its ID for the authenticated user.
+ *
+ * This function retrieves a specific non-deleted project associated with the authenticated user
+ * by its unique ID.
+ *
+ * @param {string} projectId - The ID of the project to be fetched.
+ * @returns {Promise<ApiResponse<Project>>} - A response object containing the project or an error message.
+ */
+export async function getProjectById(projectId: string) {
+    try {
+        // Authenticate the user's session
+        const session = await auth();
+
+        // Check for a valid session and user
+        if (!session || !session.user || !session.user.id) {
+            return errorResponse('Not authenticated', 401);
+        }
+
+        // Validate the project ID
+        if (!projectId) {
+            return errorResponse('Project ID is required', 400);
+        }
+
+        // Retrieve the project from the database
+        const project = await prisma.project.findUnique({
+            where: {
+                id: projectId,
+                userId: session.user.id,
+            },
+        });
+
+        // Return error if project is not found
+        if (!project) {
+            return errorResponse('Project not found', 404);
+        }
+
+        // Return success response with the project
+        return successResponse(project, 'Project found successfully');
+    } catch (error) {
+        // Log and return an internal server error response
+        console.log({ error });
+        return errorResponse('Internal server error', 500);
+    }
+}
