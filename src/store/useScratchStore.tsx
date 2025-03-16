@@ -16,7 +16,7 @@ const useScratchStore = create<ScratchState>()(
                 outlines: [],
                 addOutline: (outline: OutlineCard) =>
                     set((state) => ({
-                        outlines: [outline, ...state.outlines],
+                        outlines: [...state.outlines, outline],
                     })),
                 addMultipleOutlines: (outlines: OutlineCard[]) =>
                     set(() => ({
