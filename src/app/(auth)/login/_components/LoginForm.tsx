@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { LoginInput, loginSchema } from '@/schema/auth.schema';
 import { useState, useTransition } from 'react';
 import { login } from '@/actions/auth.action';
-import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import {
     Form,
@@ -20,20 +19,20 @@ import { Input } from '@/components/ui/input';
 import LoadingButton from '@/components/global/LoadingButton';
 
 export default function LoginForm() {
-    const [showTwoAuth, setTwoAuth] = useState(false);
+    const [showTwoAuth, setShowTwoAuth] = useState(false);
     const [isPending, transitionStartFcn] = useTransition();
-
-    const searchParams = useSearchParams();
-    const urlError =
-        searchParams.get('error') === 'OAuthAccountNotLinked'
-            ? 'Email is already in use with different provider!'
-            : '';
+    const [email, setEmail] = useState(''); // Store email for 2FA
 
     const form = useForm<LoginInput>({
         resolver: zodResolver(loginSchema),
     });
 
     const onsubmit = (data: LoginInput) => {
+        // Store email when first submitting for 2FA
+        if (!showTwoAuth) {
+            setEmail(data.email);
+        }
+
         transitionStartFcn(() => {
             login(data)
                 .then((data) => {
@@ -41,9 +40,12 @@ export default function LoginForm() {
                         toast.error(data.error);
                     } else if ('success' in data) {
                         form.reset();
+                        setShowTwoAuth(false);
+                        setEmail('');
                         toast.success(data.success);
                     } else if ('twoAuth' in data) {
-                        setTwoAuth(true);
+                        setShowTwoAuth(true);
+                        toast.info('Please enter your 2FA code');
                     }
                 })
                 .catch(() => {
@@ -52,28 +54,60 @@ export default function LoginForm() {
         });
     };
 
+    const handleBackToLogin = () => {
+        setShowTwoAuth(false);
+        setEmail('');
+        form.reset();
+    };
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onsubmit)} className="space-y-4">
                 {showTwoAuth ? (
-                    <FormField
-                        control={form.control}
-                        name="code"
-                        render={({ field }) => (
-                            <FormItem className="space-y-2">
-                                <FormLabel htmlFor="code">Code</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        id="code"
-                                        {...field}
-                                        placeholder="123456"
-                                        type="number"
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    <>
+                        <div className="text-center space-y-2">
+                            <p className="text-sm text-muted-foreground">
+                                Enter the 6-digit code sent to:
+                            </p>
+                            <p className="font-medium">{email}</p>
+                        </div>
+                        <FormField
+                            control={form.control}
+                            name="code"
+                            render={({ field }) => (
+                                <FormItem className="space-y-2">
+                                    <FormLabel htmlFor="code">
+                                        2FA Code
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            id="code"
+                                            {...field}
+                                            placeholder="123456"
+                                            type="number"
+                                            maxLength={6}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <div className="flex gap-2">
+                            <button
+                                type="button"
+                                onClick={handleBackToLogin}
+                                className="flex-1 px-4 py-2 text-sm border border-input rounded-md hover:bg-accent"
+                            >
+                                Back to Login
+                            </button>
+                            <LoadingButton
+                                className="flex-1"
+                                loading={isPending}
+                            >
+                                Confirm
+                            </LoadingButton>
+                        </div>
+                    </>
                 ) : (
                     <>
                         <FormField
@@ -121,11 +155,11 @@ export default function LoginForm() {
                                 </FormItem>
                             )}
                         />
+                        <LoadingButton className="w-full" loading={isPending}>
+                            Login
+                        </LoadingButton>
                     </>
                 )}
-                <LoadingButton className="w-full" loading={isPending}>
-                    {showTwoAuth ? 'Confirm' : 'Login'}
-                </LoadingButton>
             </form>
         </Form>
     );

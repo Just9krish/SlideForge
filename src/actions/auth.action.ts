@@ -42,7 +42,7 @@ import prisma from '@/lib/prisma';
  */
 export async function login(
     payload: LoginInput
-): Promise<{ success: string } | { error: string } | { twoAuth: boolean }> {
+): Promise<{ success: string; } | { error: string; } | { twoAuth: boolean; }> {
     const validateField = loginSchema.safeParse(payload);
 
     if (!validateField.success) {
@@ -79,11 +79,11 @@ export async function login(
             );
 
             if (!twoAuthCode) {
-                return { error: 'Invalid code!' };
+                return { error: 'Invalid 2FA code!' };
             }
 
             if (twoAuthCode.token !== code) {
-                return { error: 'Invalid code!' };
+                return { error: 'Invalid 2FA code!' };
             }
 
             const hasExpired = isBefore(
@@ -92,7 +92,7 @@ export async function login(
             );
 
             if (hasExpired) {
-                return { error: 'Code expired!' };
+                return { error: '2FA code expired!' };
             }
 
             // Delete any existing two-factor confirmation

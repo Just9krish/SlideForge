@@ -6,7 +6,11 @@ import {
     getTwoFactorTokenByEmail,
     getVerificationTokenByEmail,
 } from '@/prismaUtils/token';
-import { sendResetPasswordEmail, sendVerificationEmail } from '@/lib/mail';
+import {
+    sendResetPasswordEmail,
+    sendVerificationEmail,
+    sendTwoAuthEmail,
+} from '@/lib/mail';
 import { addHours, isAfter } from 'date-fns';
 import crypto from 'crypto';
 
@@ -121,6 +125,9 @@ export const generateTwoFactorToken = async (email: string) => {
                 token: token,
             },
         });
+
+        // Send the 2FA code via email
+        await sendTwoAuthEmail(twoFactorToken.email, twoFactorToken.token);
 
         return twoFactorToken;
     }
